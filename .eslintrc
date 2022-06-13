@@ -1,6 +1,17 @@
 {
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es2021": true
+  },
   "extends": "airbnb-base",
+  "parserOptions": {
+    "ecmaVersion": "latest"
+  },
   "rules": {
-    "no-underscore-dangle": ["error", { "allow": ["_id"] }]
+    "no-underscore-dangle": ["error", { "allow": ["_id"] }], // _id
+    "import/no-unresolved": 0, // разрешает импортировать модули
+    "no-console": 0,
+    "quotes": 0
   }
 }
