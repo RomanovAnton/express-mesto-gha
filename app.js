@@ -1,6 +1,16 @@
 const express = require("express");
 const mongoose = require("mongoose");
 
+const validationErrorCode = 400;
+const notFoundErrorCode = 404;
+const defaultErrorCode = 500;
+
+module.exports = {
+  validationErrorCode,
+  notFoundErrorCode,
+  defaultErrorCode,
+};
+
 const bodyParser = require("body-parser");
 
 const { PORT = 3000 } = process.env;
@@ -10,7 +20,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use((req, res, next) => {
   req.user = {
-    _id: "62a99b178b3ad4b5227dc3a4",
+    _id: "62a844e64ed25774e95cc9ac",
   };
   next();
 });

@@ -1,10 +1,15 @@
 const Card = require("../models/card");
+const {
+  validationErrorCode,
+  notFoundErrorCode,
+  defaultErrorCode,
+} = require("../app");
 
 module.exports.getCards = (req, res) => {
   Card.find({})
-    .then((cards) => res.send({ data: cards }))
+    .then((cards) => res.send(cards))
     .catch((err) => {
-      res.status(500).send({ message: err.name });
+      res.status(defaultErrorCode).send({ message: err.name });
     });
 };
 
@@ -15,22 +20,24 @@ module.exports.createCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        const ERROR_CODE = 400;
-        res.status(ERROR_CODE).send({
+        res.status(validationErrorCode).send({
           message: "Переданы некорректные данные при создании карточки.",
         });
+        return;
       }
+      res.status(defaultErrorCode).send({
+        message: `Произошла неизвестная ошибка ${err.name}: ${err.message}`,
+      });
     });
 };
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .then((card) => res.send({ data: card }))
+    .then(() => res.send({ message: "карточка удалена" }))
     .catch((err) => {
       if (err.name === "CastError") {
-        const ERROR_CODE = 404;
-        res.status(ERROR_CODE).send({
-          message: "Карточка с указанным _id не найдена",
+        res.status(notFoundErrorCode).send({
+          message: "Карточка с указанным _id не найдена.",
         });
         return;
       }
@@ -46,9 +53,23 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .then(() => res.send({ message: "ok" }))
+    .then(() => res.send({ message: "успешно" }))
     .catch((err) => {
-      res.send(err.name);
+      if (err.name === "CastError") {
+        res.status(notFoundErrorCode).send({
+          message: "Передан несуществующий _id карточки.",
+        });
+        return;
+      }
+      if (err.name === "ValidationError") {
+        res.status(validationErrorCode).send({
+          message: "Переданы некорректные данные для постановки/снятии лайка.",
+        });
+        return;
+      }
+      res.status(defaultErrorCode).send({
+        message: `Произошла неизвестная ошибка ${err.name}: ${err.message}`,
+      });
     });
 };
 
@@ -57,5 +78,23 @@ module.exports.dislikeCard = (req, res) => {
     req.params.cardId,
     { $pull: { likes: req.user._id } },
     { new: true },
-  ).then(() => res.send({ message: "ok" })).catch((err) => res.send(err.name));
+  )
+    .then(() => res.send({ message: "успешно" }))
+    .catch((err) => {
+      if (err.name === "CastError") {
+        res.status(notFoundErrorCode).send({
+          message: "Передан несуществующий _id карточки.",
+        });
+        return;
+      }
+      if (err.name === "ValidationError") {
+        res.status(validationErrorCode).send({
+          message: "Переданы некорректные данные для постановки/снятии лайка.",
+        });
+        return;
+      }
+      res.status(defaultErrorCode).send({
+        message: `Произошла неизвестная ошибка ${err.name}: ${err.message}`,
+      });
+    });
 };
