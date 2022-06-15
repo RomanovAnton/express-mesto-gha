@@ -45,9 +45,11 @@ module.exports.likeCard = (req, res) => {
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
     { new: true },
-  ).catch((err) => {
-    res.send(err.name);
-  });
+  )
+    .then(() => res.send({ message: "ok" }))
+    .catch((err) => {
+      res.send(err.name);
+    });
 };
 
 module.exports.dislikeCard = (req, res) => {
@@ -55,5 +57,5 @@ module.exports.dislikeCard = (req, res) => {
     req.params.cardId,
     { $pull: { likes: req.user._id } },
     { new: true },
-  ).catch((err) => res.send(err.name));
+  ).then(() => res.send({ message: "ok" })).catch((err) => res.send(err.name));
 };

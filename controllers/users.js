@@ -14,29 +14,42 @@ module.exports.getUser = (req, res) => {
 
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
-  const owner = req.user._id;
   Users.create({
     name,
     about,
     avatar,
-    owner,
   })
     .then((user) => res.send({ data: user }))
     .catch((err) => res.send({ message: err.message }));
 };
 
 module.exports.updateProfile = (req, res) => {
-  const { name, about } = req.body;
+  const { name, about, avatar } = req.body;
   Users.findByIdAndUpdate(
     req.user._id,
-    { name, about },
+    { name, about, avatar },
     { new: true, runValidators: true },
   )
     .then((updateData) => {
       res.send({ data: updateData });
-      console.log(updateData);
     })
     .catch((err) => {
-      res.status(400).send({ message: err.name });
+      res.status(500).send({ message: err.name });
+    });
+};
+
+module.exports.updateAvatar = (req, res) => {
+  const avatar = req.body;
+  console.log(avatar);
+  Users.findByIdAndUpdate(
+    req.user._id,
+    avatar,
+    { new: true, runValidators: true },
+  )
+    .then(() => {
+      res.send({ message: "change avatar succsess" });
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.name });
     });
 };
