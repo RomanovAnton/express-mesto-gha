@@ -8,9 +8,15 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-
+app.use((req, res, next) => {
+  req.user = {
+    _id: "62a844e64ed25774e95cc9ac",
+  };
+  next();
+});
 mongoose.connect("mongodb://localhost:27017/mydb");
 
 app.use("/users", require("./routes/users"));
+app.use("/cards", require("./routes/cards"));
 
 app.listen(PORT);
