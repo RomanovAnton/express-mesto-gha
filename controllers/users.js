@@ -2,13 +2,13 @@ const Users = require("../models/user");
 const {
   validationErrorCode,
   notFoundErrorCode,
-  defaultErrorCode,
+  handleDefaultError,
 } = require("../app");
 
 module.exports.getUsers = (req, res) => {
   Users.find({})
     .then((users) => res.send(users))
-    .catch((err) => res.status(defaultErrorCode).send({ message: err.message }));
+    .catch((err) => handleDefaultError(err, res));
 };
 
 module.exports.createUser = (req, res) => {
@@ -26,9 +26,7 @@ module.exports.createUser = (req, res) => {
         });
         return;
       }
-      res.status(defaultErrorCode).send({
-        message: `Произошла неизвестная ошибка ${err.name}: ${err.message}`,
-      });
+      handleDefaultError(err, res);
     });
 };
 
@@ -42,9 +40,7 @@ module.exports.getUser = (req, res) => {
         });
         return;
       }
-      res.status(defaultErrorCode).send({
-        message: `Произошла неизвестная ошибка ${err.name}: ${err.message}`,
-      });
+      handleDefaultError(err, res);
     });
 };
 
@@ -71,9 +67,7 @@ module.exports.updateProfile = (req, res) => {
         });
         return;
       }
-      res.status(defaultErrorCode).send({
-        message: `Произошла неизвестная ошибка ${err.name}: ${err.message}`,
-      });
+      handleDefaultError(err, res);
     });
 };
 
@@ -100,8 +94,6 @@ module.exports.updateAvatar = (req, res) => {
         });
         return;
       }
-      res.status(defaultErrorCode).send({
-        message: `Произошла неизвестная ошибка ${err.name}: ${err.message}`,
-      });
+      handleDefaultError(err, res);
     });
 };

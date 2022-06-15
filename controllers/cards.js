@@ -2,22 +2,20 @@ const Card = require("../models/card");
 const {
   validationErrorCode,
   notFoundErrorCode,
-  defaultErrorCode,
+  handleDefaultError,
 } = require("../app");
 
 module.exports.getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send(cards))
-    .catch((err) => {
-      res.status(defaultErrorCode).send({ message: err.name });
-    });
+    .catch((err) => handleDefaultError(err, res));
 };
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   const owner = req.user._id;
   Card.create({ name, link, owner })
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === "ValidationError") {
         res.status(validationErrorCode).send({
@@ -25,9 +23,7 @@ module.exports.createCard = (req, res) => {
         });
         return;
       }
-      res.status(defaultErrorCode).send({
-        message: `Произошла неизвестная ошибка ${err.name}: ${err.message}`,
-      });
+      handleDefaultError(err, res);
     });
 };
 
@@ -41,9 +37,7 @@ module.exports.deleteCard = (req, res) => {
         });
         return;
       }
-      res.send({
-        message: `Произошла неизвестная ошибка ${err.name}: ${err.message}`,
-      });
+      handleDefaultError(err, res);
     });
 };
 
@@ -67,9 +61,7 @@ module.exports.likeCard = (req, res) => {
         });
         return;
       }
-      res.status(defaultErrorCode).send({
-        message: `Произошла неизвестная ошибка ${err.name}: ${err.message}`,
-      });
+      handleDefaultError(err, res);
     });
 };
 
@@ -93,8 +85,6 @@ module.exports.dislikeCard = (req, res) => {
         });
         return;
       }
-      res.status(defaultErrorCode).send({
-        message: `Произошла неизвестная ошибка ${err.name}: ${err.message}`,
-      });
+      handleDefaultError(err, res);
     });
 };
