@@ -42,11 +42,9 @@ module.exports.getUser = (req, res) => {
           .status(notFoundErrorCode)
           .send({ message: "Пользователя с указанным _id не существует" });
       } else if (err.name === "CastError") {
-        res
-          .status(validationErrorCode)
-          .send({
-            message: "Переданы некорректные данные при создании пользователя.",
-          });
+        res.status(validationErrorCode).send({
+          message: "Переданы некорректные данные при создании пользователя.",
+        });
       } else {
         handleDefaultError(err, res);
       }
@@ -82,13 +80,12 @@ module.exports.updateProfile = (req, res) => {
 
 module.exports.updateAvatar = (req, res) => {
   const avatar = req.body;
-  console.log(avatar);
   Users.findByIdAndUpdate(req.user._id, avatar, {
     new: true,
     runValidators: true,
   })
     .then(() => {
-      res.send({ message: req.user._id });
+      res.send(avatar);
     })
     .catch((err) => {
       if (err.name === "CastError") {

@@ -33,7 +33,9 @@ app.use("/users", require("./routes/users"));
 app.use("/cards", require("./routes/cards"));
 
 app.use("*", (req, res) => {
-  res.send({ message: "указанного пути не существует" });
+  res
+    .status(notFoundErrorCode)
+    .send({ message: "указанного пути не существует" });
 });
 
 app.listen(PORT);
