@@ -23,7 +23,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use((req, res, next) => {
   req.user = {
-    _id: "62a844e64ed25774e95cc9ac",
+    _id: "62a9da727ca22b1b7714eeab",
   };
   next();
 });
@@ -31,5 +31,9 @@ mongoose.connect("mongodb://localhost:27017/mydb");
 
 app.use("/users", require("./routes/users"));
 app.use("/cards", require("./routes/cards"));
+
+app.use("*", (req, res) => {
+  res.send({ message: "указанного пути не существует" });
+});
 
 app.listen(PORT);

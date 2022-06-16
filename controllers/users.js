@@ -32,15 +32,24 @@ module.exports.createUser = (req, res) => {
 
 module.exports.getUser = (req, res) => {
   Users.findById(req.params.userId)
+    .orFail(() => {
+      throw new Error("NotFoundError");
+    })
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err.name === "CastError") {
-        res.status(notFoundErrorCode).send({
-          message: "Пользователь по указанному _id не найден.",
-        });
-        return;
+      if (err.message === "NotFoundError") {
+        res
+          .status(notFoundErrorCode)
+          .send({ message: "Пользователя с указанным _id не существует" });
+      } else if (err.name === "CastError") {
+        res
+          .status(validationErrorCode)
+          .send({
+            message: "Переданы некорректные данные при создании пользователя.",
+          });
+      } else {
+        handleDefaultError(err, res);
       }
-      handleDefaultError(err, res);
     });
 };
 
@@ -79,7 +88,7 @@ module.exports.updateAvatar = (req, res) => {
     runValidators: true,
   })
     .then(() => {
-      res.send({ message: "аватар изменен" });
+      res.send({ message: req.user._id });
     })
     .catch((err) => {
       if (err.name === "CastError") {
