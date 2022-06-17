@@ -1,20 +1,8 @@
-const express = require("express");
-const mongoose = require("mongoose");
+const express = require('express');
+const mongoose = require('mongoose');
 
-const validationErrorCode = 400;
-const notFoundErrorCode = 404;
-const defaultErrorCode = 500;
-const handleDefaultError = (err, res) => {
-  res.status(defaultErrorCode).send({ message: err.name });
-};
-module.exports = {
-  validationErrorCode,
-  notFoundErrorCode,
-  defaultErrorCode,
-  handleDefaultError,
-};
-
-const bodyParser = require("body-parser");
+const bodyParser = require('body-parser');
+const { notFoundErrorCode } = require('./utils/errorConstans');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -23,19 +11,19 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use((req, res, next) => {
   req.user = {
-    _id: "62a9da727ca22b1b7714eeab",
+    _id: '62ac977fd8844d0442428cac',
   };
   next();
 });
-mongoose.connect("mongodb://localhost:27017/mydb");
+mongoose.connect('mongodb://localhost:27017/mestodb');
 
-app.use("/users", require("./routes/users"));
-app.use("/cards", require("./routes/cards"));
+app.use('/users', require('./routes/users'));
+app.use('/cards', require('./routes/cards'));
 
-app.use("*", (req, res) => {
+app.use((req, res) => {
   res
     .status(notFoundErrorCode)
-    .send({ message: "указанного пути не существует" });
+    .send({ message: 'указанного пути не существует' });
 });
 
 app.listen(PORT);

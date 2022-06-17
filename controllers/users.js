@@ -1,28 +1,28 @@
-const Users = require("../models/user");
+const User = require('../models/user');
 const {
   validationErrorCode,
   notFoundErrorCode,
   handleDefaultError,
-} = require("../app");
+} = require('../utils/errorConstans');
 
 module.exports.getUsers = (req, res) => {
-  Users.find({})
+  User.find({})
     .then((users) => res.send(users))
     .catch((err) => handleDefaultError(err, res));
 };
 
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
-  Users.create({
+  User.create({
     name,
     about,
     avatar,
   })
-    .then((user) => res.send(user))
+    .then((user) => res.status(201).send(user))
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err.name === 'ValidationError') {
         res.status(validationErrorCode).send({
-          message: "Переданы некорректные данные при создании пользователя.",
+          message: 'Переданы некорректные данные при создании пользователя.',
         });
         return;
       }
@@ -31,19 +31,19 @@ module.exports.createUser = (req, res) => {
 };
 
 module.exports.getUser = (req, res) => {
-  Users.findById(req.params.userId)
+  User.findById(req.params.userId)
     .orFail(() => {
-      throw new Error("NotFoundError");
+      throw new Error('NotFoundError');
     })
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err.message === "NotFoundError") {
+      if (err.message === 'NotFoundError') {
         res
           .status(notFoundErrorCode)
-          .send({ message: "Пользователя с указанным _id не существует" });
-      } else if (err.name === "CastError") {
+          .send({ message: 'Пользователя с указанным _id не существует' });
+      } else if (err.name === 'CastError') {
         res.status(validationErrorCode).send({
-          message: "Переданы некорректные данные при создании пользователя.",
+          message: 'Переданы некорректные данные.',
         });
       } else {
         handleDefaultError(err, res);
@@ -53,24 +53,27 @@ module.exports.getUser = (req, res) => {
 
 module.exports.updateProfile = (req, res) => {
   const { name, about, avatar } = req.body;
-  Users.findByIdAndUpdate(
+  User.findByIdAndUpdate(
     req.user._id,
     { name, about, avatar },
     { new: true, runValidators: true },
   )
+    .orFail(() => {
+      throw new Error('NotFoundError');
+    })
     .then((updateData) => {
       res.send(updateData);
     })
     .catch((err) => {
-      if (err.name === "CastError") {
+      if (err.message === 'NotFoundError') {
         res.status(notFoundErrorCode).send({
-          message: "Пользователь по указанному _id не найден.",
+          message: 'Пользователь по указанному _id не найден.',
         });
         return;
       }
-      if (err.name === "ValidationError") {
+      if (err.name === 'CastError') {
         res.status(validationErrorCode).send({
-          message: "Переданы некорректные данные при создании карточки.",
+          message: 'Переданы некорректные данные при обновлении профиля.',
         });
         return;
       }
@@ -80,23 +83,26 @@ module.exports.updateProfile = (req, res) => {
 
 module.exports.updateAvatar = (req, res) => {
   const avatar = req.body;
-  Users.findByIdAndUpdate(req.user._id, avatar, {
+  User.findByIdAndUpdate(req.user._id, avatar, {
     new: true,
     runValidators: true,
   })
-    .then(() => {
-      res.send(avatar);
+    .orFail(() => {
+      throw new Error('NotFoundError');
+    })
+    .then((newData) => {
+      res.send(newData);
     })
     .catch((err) => {
-      if (err.name === "CastError") {
+      if (err.message === 'NotFoundError') {
         res.status(notFoundErrorCode).send({
-          message: "Пользователь по указанному _id не найден.",
+          message: 'Пользователь по указанному _id не найден.',
         });
         return;
       }
-      if (err.name === "ValidationError") {
+      if (err.name === 'CastError') {
         res.status(validationErrorCode).send({
-          message: "Переданы некорректные данные при обновлении аватара.",
+          message: 'Переданы некорректные данные при обновлении аватара.',
         });
         return;
       }
