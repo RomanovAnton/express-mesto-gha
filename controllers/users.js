@@ -77,6 +77,12 @@ module.exports.updateProfile = (req, res) => {
         });
         return;
       }
+      if (err.name === 'ValidationError') {
+        res.status(validationErrorCode).send({
+          message: 'Имя пользователя должно быть длиной от 2 до 30 символов.',
+        });
+        return;
+      }
       handleDefaultError(err, res);
     });
 };
