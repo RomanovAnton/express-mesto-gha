@@ -5,8 +5,9 @@ const bodyParser = require('body-parser');
 const { notFoundErrorCode } = require('./utils/errorConstans');
 
 const { PORT = 3000 } = process.env;
-const app = express();
+mongoose.connect('mongodb://localhost:27017/mestodb');
 
+const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use((req, res, next) => {
@@ -15,8 +16,6 @@ app.use((req, res, next) => {
   };
   next();
 });
-mongoose.connect('mongodb://localhost:27017/mestodb');
-
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
