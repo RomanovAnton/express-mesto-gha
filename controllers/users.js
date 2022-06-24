@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+const validator = require('validator');
 const User = require('../models/user');
 const {
   validationErrorCode,
@@ -12,22 +14,41 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  User.create({
-    name,
-    about,
-    avatar,
-  })
-    .then((user) => res.status(201).send(user))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(validationErrorCode).send({
-          message: 'Переданы некорректные данные при создании пользователя.',
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+
+  if (validator.isEmail(email)) {
+    bcrypt.hash(password, 10).then((hash) => {
+      User.create({
+        name,
+        about,
+        avatar,
+        email,
+        password: hash,
+      })
+        .then((user) => res.status(201).send(user))
+        .catch((err) => {
+          if (err.name === 'ValidationError') {
+            res.status(validationErrorCode).send({
+              message:
+                'Переданы некорректные данные при создании пользователя.',
+            });
+            return;
+          }
+          if (err.name === 'MongoServerError') {
+            res.status(409).send({
+              message:
+                'Пользователь с указанным email уже существует',
+            });
+            return;
+          }
+          handleDefaultError(err, res);
         });
-        return;
-      }
-      handleDefaultError(err, res);
     });
+  } else {
+    res.send({ message: 'некорректный email' });
+  }
 };
 
 module.exports.getUser = (req, res) => {
