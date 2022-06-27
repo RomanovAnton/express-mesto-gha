@@ -1,5 +1,4 @@
 const bcrypt = require('bcrypt');
-const validator = require('validator');
 const User = require('../models/user');
 const {
   validationErrorCode,
@@ -7,10 +6,16 @@ const {
   handleDefaultError,
 } = require('../utils/errorConstans');
 
+module.exports.getCurrentUser = (req, res) => {
+  User.findOne(req.user).then((user) => {
+    res.send(user);
+  });
+};
+
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch((err) => handleDefaultError(err, res));
+    .catch((err) => res.send({ message: err.message }));
 };
 
 module.exports.createUser = (req, res) => {
@@ -18,37 +23,37 @@ module.exports.createUser = (req, res) => {
     name, about, avatar, email, password,
   } = req.body;
 
-  if (validator.isEmail(email)) {
-    bcrypt.hash(password, 10).then((hash) => {
-      User.create({
-        name,
-        about,
-        avatar,
-        email,
-        password: hash,
-      })
-        .then((user) => res.status(201).send(user))
-        .catch((err) => {
-          if (err.name === 'ValidationError') {
-            res.status(validationErrorCode).send({
-              message:
-                'Переданы некорректные данные при создании пользователя.',
-            });
-            return;
-          }
-          if (err.name === 'MongoServerError') {
-            res.status(409).send({
-              message:
-                'Пользователь с указанным email уже существует',
-            });
-            return;
-          }
-          handleDefaultError(err, res);
-        });
-    });
-  } else {
-    res.send({ message: 'некорректный email' });
-  }
+  bcrypt.hash(password, 10).then((hash) => {
+    User.create({
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
+    })
+      .then((user) => res.status(201).send(user))
+      .catch((err) => {
+        if (err.message.includes('user validation failed: email')) {
+          res.status(validationErrorCode).send({
+            message: 'Некорректный email',
+          });
+          return;
+        }
+        if (err.name === 'ValidationError') {
+          res.status(validationErrorCode).send({
+            message: 'Переданы некорректные данные при создании пользователя.',
+          });
+          return;
+        }
+        if (err.name === 'MongoServerError') {
+          res.status(409).send({
+            message: 'Пользователь с указанным email уже существует',
+          });
+          return;
+        }
+        handleDefaultError(err, res);
+      });
+  });
 };
 
 module.exports.getUser = (req, res) => {
