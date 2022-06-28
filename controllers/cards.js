@@ -28,24 +28,44 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .orFail(() => {
       throw new Error('NotFoundError');
     })
-    .then(() => {
-      res.send({ message: 'успешно' });
+    .then((card) => {
+      if (`${card.owner}` !== req.user._id) {
+        throw new Error('Forbidden');
+      }
+      Card.findByIdAndRemove(req.params.cardId)
+        .orFail(() => {
+          throw new Error('NotFoundError');
+        })
+        .then(() => {
+          res.send({ message: 'успешно' });
+        })
+        .catch((err) => {
+          if (err.message === 'NotFoundError') {
+            res
+              .status(notFoundErrorCode)
+              .send({ message: 'Передан несуществующий _id карточки.' });
+          } else if (err.name === 'CastError') {
+            res.status(validationErrorCode).send({
+              message: 'Переданы некорректные данные для удаления карточки.',
+            });
+          } else if (err.message === 'Forbidden') {
+            res.status(403).send({
+              message: 'Удалять можно только свою карточку',
+            });
+          } else {
+            handleDefaultError(err, res);
+          }
+        });
     })
     .catch((err) => {
-      if (err.message === 'NotFoundError') {
-        res
-          .status(notFoundErrorCode)
-          .send({ message: 'Передан несуществующий _id карточки.' });
-      } else if (err.name === 'CastError') {
-        res.status(validationErrorCode).send({
-          message: 'Переданы некорректные данные для удаления карточки.',
+      if (err.message === 'Forbidden') {
+        res.status(403).send({
+          message: 'Удалять можно только свою карточку',
         });
-      } else {
-        handleDefaultError(err, res);
       }
     });
 };
