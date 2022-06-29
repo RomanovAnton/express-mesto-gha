@@ -2,6 +2,7 @@
 const validationError = require('./validation-error');
 const forbiddenError = require('./forbidden-error');
 const notFoundError = require('./notFound-error');
+const conflictError = require('./conflict-error');
 const { handleDefaultError } = require('./errorConstans');
 
 module.exports = (err, req, res, next) => {
@@ -22,6 +23,20 @@ module.exports = (err, req, res, next) => {
     res
       .status(forbiddenError.statusCode)
       .send({ message: forbiddenError.message });
+    return;
+  }
+
+  if (err.message.includes('user validation failed: email')) {
+    res
+      .status(validationError.statusCode)
+      .send({ message: validationError.message });
+    return;
+  }
+
+  if (err.name === 'MongoServerError') {
+    res.status(conflictError.statusCode).send({
+      message: conflictError.message,
+    });
     return;
   }
 
