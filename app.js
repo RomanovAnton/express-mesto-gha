@@ -1,4 +1,5 @@
 const express = require('express');
+
 const mongoose = require('mongoose');
 
 const bodyParser = require('body-parser');
@@ -19,8 +20,6 @@ app.use((req, res) => {
     .send({ message: 'указанного пути не существует' });
 });
 
-app.use((err, req, res, next) => {
-  res.status(err.statusCode).send({ message: err.message });
-});
+app.use(require('./utils/handle-errors'));
 
 app.listen(PORT);

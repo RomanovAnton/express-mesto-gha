@@ -1,29 +1,20 @@
-const validationErrorCode = 400;
-const unauthorizedErrorCode = 401;
-const forbiddenErrorCode = 403;
-const notFoundErrorCode = 404;
-const conflictErrorCode = 409;
-const defaultErrorCode = 500;
+const VALIDATION_ERROR_CODE = 400;
+const UNAUTHORIZED_ERROR_CODE = 401;
+const FORBIDDEN_ERROR_CODE = 403;
+const NOT_FOUND_ERROR_CODE = 404;
+const CONFLICT_ERROR_CODE = 409;
+const DEFAULT_ERROR_CODE = 500;
 
 const handleDefaultError = (err, res) => {
-  res.status(defaultErrorCode).send({ message: err.name });
+  res.status(DEFAULT_ERROR_CODE).send({ message: 'Ошибка сервера' });
 };
 
 module.exports = {
-  validationErrorCode,
-  unauthorizedErrorCode,
-  forbiddenErrorCode,
-  notFoundErrorCode,
-  conflictErrorCode,
-  defaultErrorCode,
+  VALIDATION_ERROR_CODE,
+  UNAUTHORIZED_ERROR_CODE,
+  FORBIDDEN_ERROR_CODE,
+  NOT_FOUND_ERROR_CODE,
+  CONFLICT_ERROR_CODE,
+  DEFAULT_ERROR_CODE,
   handleDefaultError,
 };
-
-// 400 — переданы некорректные данные в метод создания карточки, пользователя, обновления аватара
-// пользователя и профиля;
-// 401 — передан неверный логин или пароль. Ещё эту ошибку возвращает авторизационный middleware,
-// если передан неверный JWT;
-// 403 — попытка удалить чужую карточку;
-// 404 — карточка или пользователь не найден, или был запрошен несуществующий роут;
-// 409 — при регистрации указан email, который уже существует на сервере;
-// 500 — ошибка по умолчанию. Сопровождается сообщением: «На сервере произошла ошибка».
