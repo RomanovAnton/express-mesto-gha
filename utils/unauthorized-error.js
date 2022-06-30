@@ -1,4 +1,4 @@
-const UNAUTHORIZED_ERROR_CODE = require('./errorConstans');
+const { UNAUTHORIZED_ERROR_CODE } = require('./errorConstans');
 
 class UnauthorizedError extends Error {
   constructor(message) {
@@ -7,4 +7,6 @@ class UnauthorizedError extends Error {
   }
 }
 
-module.exports = UnauthorizedError;
+module.exports = new UnauthorizedError(
+  'Проверьте введенные email и password или пройдите регистрацию снова',
+);

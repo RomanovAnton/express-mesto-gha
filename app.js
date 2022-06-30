@@ -1,7 +1,7 @@
 const express = require('express');
-
 const mongoose = require('mongoose');
 
+const { errors } = require('celebrate');
 const bodyParser = require('body-parser');
 const { notFoundErrorCode } = require('./utils/errorConstans');
 
@@ -20,6 +20,7 @@ app.use((req, res) => {
     .send({ message: 'указанного пути не существует' });
 });
 
-app.use(require('./utils/handle-errors'));
+app.use(errors()); // фильтр перед роутами
+app.use(require('./utils/handle-errors')); // централизованный обработчик ошибок
 
 app.listen(PORT);

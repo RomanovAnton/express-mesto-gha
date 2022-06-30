@@ -4,7 +4,7 @@ module.exports = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    res.status(401).send({ message: 'неверный токен' });
+    return next(new Error('UnauthorizedError'));
   }
   const token = authorization.replace('Bearer ', '');
 
@@ -12,9 +12,9 @@ module.exports = (req, res, next) => {
   try {
     payload = jwt.verify(token, 'some-secret-key');
   } catch {
-    res.status(401).send({ message: 'не совпадает с ранее отправленным токеном' });
+    return next(new Error('UnauthorizedError'));
   }
 
   req.user = payload;
-  next();
+  return next();
 };

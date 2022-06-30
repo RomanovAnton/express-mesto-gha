@@ -3,6 +3,7 @@ const validationError = require('./validation-error');
 const forbiddenError = require('./forbidden-error');
 const notFoundError = require('./notFound-error');
 const conflictError = require('./conflict-error');
+const unauthorizedError = require('./unauthorized-error');
 const { handleDefaultError } = require('./errorConstans');
 
 module.exports = (err, req, res, next) => {
@@ -33,9 +34,20 @@ module.exports = (err, req, res, next) => {
     return;
   }
 
+  //   if (err.code === 11000) {
+  //     // Обработка ошибки
+  // }
+
   if (err.name === 'MongoServerError') {
     res.status(conflictError.statusCode).send({
       message: conflictError.message,
+    });
+    return;
+  }
+
+  if (err.message === 'UnauthorizedError') {
+    res.status(unauthorizedError.statusCode).send({
+      message: unauthorizedError.message,
     });
     return;
   }
