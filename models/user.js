@@ -1,5 +1,6 @@
-const validator = require('validator');
 const mongoose = require('mongoose');
+const validator = require('validator');
+const { regExpUrl } = require('../utils/regexp/regExpUrl');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -17,7 +18,7 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     validate: {
-      validator: (v) => /https?:\/\/(www.)?[a-zA-Z0-9\-._~:/?#[\]@!$&'()*+,;=,]*/.test(v),
+      validator: (v) => regExpUrl.test(v),
     },
     default:
       'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',

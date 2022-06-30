@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 
 const { errors } = require('celebrate');
 const bodyParser = require('body-parser');
-const { notFoundErrorCode } = require('./utils/errorConstans');
 
 const { PORT = 3000 } = process.env;
 mongoose.connect('mongodb://localhost:27017/mestodb');
@@ -14,13 +13,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
-app.use((req, res) => {
-  res
-    .status(notFoundErrorCode)
-    .send({ message: 'указанного пути не существует' });
+app.use((req, res, next) => {
+  next(new Error('NotFoundPath'));
 });
-
-app.use(errors()); // фильтр перед роутами
-app.use(require('./utils/handle-errors')); // централизованный обработчик ошибок
+app.use(errors());
+app.use(require('./middlewares/handle-errors'));
 
 app.listen(PORT);
