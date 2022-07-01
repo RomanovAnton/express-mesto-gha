@@ -9,7 +9,7 @@ module.exports.login = (req, res, next) => {
     .select('+password')
     .then((user) => {
       if (!user) {
-        throw new Error('ValidationError');
+        throw new Error('UnauthorizedError');
       }
       return bcrypt
         .compare(password, user.password)
@@ -20,7 +20,7 @@ module.exports.login = (req, res, next) => {
           const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
             expiresIn: '7d',
           });
-          res.status(201).send({ token });
+          res.status(200).send({ token });
         })
         .catch((err) => next(err));
     })

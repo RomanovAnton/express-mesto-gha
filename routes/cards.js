@@ -3,6 +3,7 @@ const { celebrate, Joi } = require('celebrate');
 const { getCards, createCard, deleteCard } = require('../controllers/cards');
 const { likeCard, dislikeCard } = require('../controllers/cards');
 const auth = require('../middlewares/auth');
+const { regExpUrl } = require('../utils/regexp/regExpUrl');
 
 router.use(auth);
 router.get('/', getCards);
@@ -11,8 +12,8 @@ router.post(
   '/',
   celebrate({
     body: Joi.object().keys({
-      name: Joi.string().min(2).max(30),
-      link: Joi.string(),
+      name: Joi.string().required().min(2).max(30),
+      link: Joi.string().required().regex(regExpUrl),
     }),
   }),
   createCard,
