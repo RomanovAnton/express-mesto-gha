@@ -7,4 +7,4 @@ class ForbiddenError extends Error {
   }
 }
 
-module.exports = new ForbiddenError('Удалять можно только свою карточку');
+module.exports = ForbiddenError;

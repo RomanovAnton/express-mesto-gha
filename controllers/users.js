@@ -1,10 +1,11 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
+const NotFoundError = require('../utils/errors/notFound-error');
 
 module.exports.getCurrentUser = (req, res, next) => {
   User.findOne(req.user)
     .orFail(() => {
-      throw new Error('NotFoundError');
+      throw new NotFoundError('Пользователь не найден');
     })
     .then((user) => {
       res.send(user);
@@ -44,7 +45,7 @@ module.exports.createUser = (req, res, next) => {
 module.exports.getUser = (req, res, next) => {
   User.findById(req.params.userId)
     .orFail(() => {
-      throw new Error('NotFoundError');
+      throw new NotFoundError('Пользователь с указанным _id не найден');
     })
     .then((user) => res.send(user))
     .catch((err) => next(err));
@@ -58,7 +59,7 @@ module.exports.updateProfile = (req, res, next) => {
     { new: true, runValidators: true },
   )
     .orFail(() => {
-      throw new Error('NotFoundError');
+      throw new NotFoundError('Пользователь не найден');
     })
     .then((updateData) => {
       res.send(updateData);
@@ -73,7 +74,7 @@ module.exports.updateAvatar = (req, res, next) => {
     runValidators: true,
   })
     .orFail(() => {
-      throw new Error('NotFoundError');
+      throw new NotFoundError('Пользователь не найден');
     })
     .then((newData) => {
       res.send(newData);

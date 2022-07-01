@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const UnauthorizedError = require('../utils/errors/unauthorized-error');
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
@@ -9,13 +10,13 @@ module.exports.login = (req, res, next) => {
     .select('+password')
     .then((user) => {
       if (!user) {
-        throw new Error('UnauthorizedError');
+        throw new UnauthorizedError('Передан неверный логин или пароль');
       }
       return bcrypt
         .compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            throw new Error('UnauthorizedError');
+            throw new UnauthorizedError('Передан неверный логин или пароль');
           }
           const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
             expiresIn: '7d',

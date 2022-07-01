@@ -7,4 +7,4 @@ class NotFoundError extends Error {
   }
 }
 
-module.exports = new NotFoundError('Данные не найдены');
+module.exports = NotFoundError;

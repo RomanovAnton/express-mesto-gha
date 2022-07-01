@@ -7,6 +7,4 @@ class UnauthorizedError extends Error {
   }
 }
 
-module.exports = new UnauthorizedError(
-  'Проверьте введенные email и password или пройдите регистрацию снова',
-);
+module.exports = UnauthorizedError;

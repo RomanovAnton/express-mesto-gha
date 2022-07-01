@@ -1,8 +1,6 @@
 const validationError = require('../utils/errors/validation-error');
-const forbiddenError = require('../utils/errors/forbidden-error');
 const notFoundError = require('../utils/errors/notFound-error');
 const conflictError = require('../utils/errors/conflict-error');
-const unauthorizedError = require('../utils/errors/unauthorized-error');
 const { handleDefaultError } = require('../utils/errors/errorConstans');
 
 module.exports = (err, req, res, next) => {
@@ -12,24 +10,13 @@ module.exports = (err, req, res, next) => {
       .send({ message: validationError.message });
     return;
   }
-  if (err.message === 'NotFoundError') {
-    res
-      .status(notFoundError.statusCode)
-      .send({ message: notFoundError.message });
+  if (err.name === 'NotFoundError') {
+    res.status(err.statusCode).send({ messaege: err.message });
     return;
   }
 
-  if (err.message === 'Forbidden') {
-    res
-      .status(forbiddenError.statusCode)
-      .send({ message: forbiddenError.message });
-    return;
-  }
-
-  if (err.message.includes('user validation failed: email')) {
-    res
-      .status(validationError.statusCode)
-      .send({ message: validationError.message });
+  if (err.name === 'ForbiddenError') {
+    res.status(err.statusCode).send({ message: err.message });
     return;
   }
 
@@ -40,9 +27,9 @@ module.exports = (err, req, res, next) => {
     return;
   }
 
-  if (err.message === 'UnauthorizedError') {
-    res.status(unauthorizedError.statusCode).send({
-      message: unauthorizedError.message,
+  if (err.name === 'UnauthorizedError') {
+    res.status(err.statusCode).send({
+      message: err.message,
     });
     return;
   }

@@ -1,4 +1,6 @@
 const Card = require('../models/card');
+const NotFoundError = require('../utils/errors/notFound-error');
+const ForbiddenError = require('../utils/errors/forbidden-error');
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
@@ -17,15 +19,15 @@ module.exports.createCard = (req, res, next) => {
 module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .orFail(() => {
-      throw new Error('NotFoundError');
+      throw new NotFoundError('Карточки с указанным _id не cуществует');
     })
     .then((card) => {
       if (`${card.owner}` !== req.user._id) {
-        throw new Error('Forbidden');
+        throw new ForbiddenError('Удалять можно только свою карточку');
       }
       Card.findByIdAndRemove(req.params.cardId)
         .orFail(() => {
-          throw new Error('NotFoundError');
+          throw new NotFoundError('Карточка с указанным _id не найдена');
         })
         .then(() => {
           res.send({ message: 'успешно' });
@@ -42,7 +44,7 @@ module.exports.likeCard = (req, res, next) => {
     { new: true },
   )
     .orFail(() => {
-      throw new Error('NotFoundError');
+      throw new NotFoundError('Карточки с указанным _id не найдена');
     })
     .then((newData) => {
       res.send(newData);
@@ -57,7 +59,7 @@ module.exports.dislikeCard = (req, res, next) => {
     { new: true },
   )
     .orFail(() => {
-      throw new Error('NotFoundError');
+      throw new NotFoundError('Карточки с указанным _id не найдена');
     })
     .then((newData) => {
       res.send(newData);
