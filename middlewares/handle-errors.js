@@ -1,9 +1,9 @@
 const validationError = require('../utils/errors/validation-error');
-const notFoundError = require('../utils/errors/notFound-error');
 const conflictError = require('../utils/errors/conflict-error');
 const { handleDefaultError } = require('../utils/errors/errorConstans');
 
 module.exports = (err, req, res, next) => {
+  console.log(err);
   if (err.name === 'ValidationError' || err.name === 'CastError') {
     res
       .status(validationError.statusCode)
@@ -35,7 +35,7 @@ module.exports = (err, req, res, next) => {
   }
 
   if (err.message === 'NotFoundPath') {
-    res.status(notFoundError.statusCode).send({
+    res.status(400).send({
       message: 'Указанного пути не существует',
     });
     return;
