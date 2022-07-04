@@ -1,27 +1,15 @@
-[![Tests](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-13-sprint.yml/badge.svg)](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-13-sprint.yml) [![Tests](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-14-sprint.yml/badge.svg)](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-14-sprint.yml)
+[![Tests](https://github.com/RomanovAnton/express-mesto-gha/actions/workflows/tests-13-sprint.yml/badge.svg)](https://github.com/RomanovAnton/express-mesto-gha/actions/workflows/tests-13-sprint.yml) [![Tests](https://github.com/RomanovAnton/express-mesto-gha/actions/workflows/tests-14-sprint.yml/badge.svg)](https://github.com/RomanovAnton/express-mesto-gha/actions/workflows/tests-14-sprint.yml)
 
-# Проект Mesto фронтенд + бэкенд
+# Проект Mesto
 
-## Настройка бейджей статуса тестов
+##### Проектная работа №13
 
-Перед началом работы над проектом рекомендуется исправить бейджи, отражающие статус прохождения тестов.
-Для этого замените разметку бейджей на следующий фрагмент, подставив вместо `${RomanovAnton}` и `${express-mesto-gha}` соответствующие значения.
+1. Серверная часть для проекта MESTO
+2. В работе применены: Express, MongoDB. Использован Eslint с правилами Airbnb, добавлена валидация на уровне схем, созданы контроллеры и роуты для пользователей и карточек, добавлена обработка ошибок
+3. Планы по доработке проекта
+   - Устранение ошибок, внесение корретировок;
 
-```
-[![Tests for sprint 13](https://github.com/${имя_пользователя}/${имя репозитория}/actions/workflows/tests-13-sprint.yml/badge.svg)](https://github.com/${имя_пользователя}/${имя репозитория}/actions/workflows/tests-13-sprint.yml)
-
-[![Tests for sprint 14](https://github.com/${имя_пользователя}/${имя репозитория}/actions/workflows/tests-14-sprint.yml/badge.svg)](https://github.com/${имя_пользователя}/${имя репозитория}/actions/workflows/tests-14-sprint.yml)
-```
-
-## Директории
-
-`/routes` — папка с файлами роутера  
-`/controllers` — папка с файлами контроллеров пользователя и карточки  
-`/models` — папка с файлами описания схем пользователя и карточки
-
-Остальные директории вспомогательные, создаются при необходимости разработчиком
-
-## Запуск проекта
+##### Запуск проекта
 
 `npm run start` — запускает сервер  
 `npm run dev` — запускает сервер с hot-reload
